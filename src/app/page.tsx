@@ -16,6 +16,8 @@ import MENU from "@/data/menu";
 const RAW_PHONE = process.env.NEXT_PUBLIC_WHATSAPP ?? "";
 const DELIVERY_FEE_RAW = process.env.NEXT_PUBLIC_DELIVERY_FEE ?? "6";
 
+const MODOS: Customer["modo"][] = ["Retirada", "Entrega"];
+const PAGAMENTOS: Customer["pagamento"][] = ["PIX", "Dinheiro", "Cartão"];
 
 const WHATSAPP_PHONE = RAW_PHONE.replace(/\D/g, ""); 
 const DELIVERY_FEE = Number(DELIVERY_FEE_RAW || 0);
@@ -79,9 +81,9 @@ export default function LanchonetePedidos() {
 
   
   useEffect(() => {
-    setCart((prev) => prev.filter((l) => MENU_BY_ID.has(String(l.id))));
-   
-  }, []);
+  setCart((prev) => prev.filter((l) => MENU_BY_ID.has(String(l.id))));
+}, [MENU_BY_ID, setCart]);
+
 
   const add = (id: string | number) =>
     setCart((prev) => {
@@ -396,15 +398,17 @@ export default function LanchonetePedidos() {
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex gap-2">
-              {["Retirada", "Entrega"].map((m) => (
-                <Button
-                  key={m}
-                  variant={customer.modo === m ? "default" : "outline"}
-                  onClick={() => setCustomer({ ...customer, modo: m as any })}
-                >
-                  {m}
-                </Button>
-              ))}
+              
+                {MODOS.map((m) => (
+                  <Button
+                    key={m}
+                    variant={customer.modo === m ? "default" : "outline"}
+                    onClick={() => setCustomer({ ...customer, modo: m })}
+                  >
+                    {m}
+                  </Button>
+                ))}
+
             </div>
             {customer.modo === "Entrega" && (
               <div className="space-y-2">
@@ -453,11 +457,11 @@ export default function LanchonetePedidos() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-              {["PIX", "Dinheiro", "Cartão"].map((p) => (
+              {PAGAMENTOS.map((p) => (
                 <Button
                   key={p}
                   variant={customer.pagamento === p ? "default" : "outline"}
-                  onClick={() => setCustomer({ ...customer, pagamento: p as any })}
+                  onClick={() => setCustomer({ ...customer, pagamento: p })}
                 >
                   {p}
                 </Button>
