@@ -159,11 +159,11 @@ export default function LanchonetePedidos() {
     }\n\nItens:\n${linhas}\n\nSubtotal: R$ ${fmt(subtotal)}\nTaxa entrega: R$ ${fmt(
       taxaEntrega
     )}\n*Total: R$ ${fmt(total)}*\n\nObs: ${customer.obs ?? "-"}`;
-
-    if (!WHATSAPP_PHONE) {
-  alert("Número do WhatsApp não configurado.");
-  return;
+    if (!WHATSAPP_PHONE || WHATSAPP_PHONE.length < 12) {
+      alert("Número do WhatsApp da loja inválido. Verifique a variável NEXT_PUBLIC_WHATSAPP (somente dígitos: ex. 55DDDXXXXXXXX).");
+      return;
     }
+
     const url = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(resumo)}`;
     const win = window.open(url, "_blank", "noopener,noreferrer");
     if (win) win.opener = null;
