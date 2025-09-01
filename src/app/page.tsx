@@ -5,12 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
-import { Bike, Check, Minus, Plus, Search, ShoppingCart, Trash2, Utensils } from "lucide-react";
+import { Bike, Check, Minus, Plus, Search, ShoppingCart, Trash2, Utensils, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import MENU from "@/data/menu";
+
 
 
 const RAW_PHONE = process.env.NEXT_PUBLIC_WHATSAPP ?? "";
@@ -184,12 +185,12 @@ export default function LanchonetePedidos() {
     </div>
   </div>
 
-  {/* direita: busca ocupa a largura toda no mobile e o botão encolhe */}
+  
   <div className="flex items-center gap-2 w-full md:w-auto">
     <div className="relative flex-1 min-w-0">
       <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
       <Input
-        className="pl-9 w-full"           // <- full width no mobile
+        className="pl-9 w-full"           
         placeholder="Buscar no cardápio…"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
@@ -200,7 +201,7 @@ export default function LanchonetePedidos() {
       <SheetTrigger asChild>
         <Button size="sm" variant="default" className="gap-2 shrink-0">
           <ShoppingCart className="size-4" />
-          <span className="hidden sm:inline">Carrinho</span> {/* esconde o texto em telas muito pequenas */}
+          <span className="hidden sm:inline">Carrinho</span> 
           {cart.length > 0 && (
             <Badge variant="secondary" className="ml-1">
               {cart.reduce((a, b) => a + b.qty, 0)}
@@ -209,16 +210,30 @@ export default function LanchonetePedidos() {
         </Button>
       </SheetTrigger>
 
-      {/* largura total no celular para não “cortar” o painel */}
+     
       <SheetContent side="right" className="w-[100vw] sm:max-w-sm p-0 flex flex-col">
         <SheetHeader className="p-4 border-b sticky top-0 bg-background z-10">
-          <SheetTitle>Seu carrinho</SheetTitle>
-        </SheetHeader>
+          <div className="flex items-center justify-between">
+            <SheetTitle>Seu carrinho</SheetTitle>
+            <SheetClose asChild>
+              <Button variant="ghost" size="icon" className="-mr-1">
+                <X className="size-4" />
+              </Button>
+            </SheetClose>
+          </div>
+      </SheetHeader>
+
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {cartLines.length === 0 && (
-            <p className="text-muted-foreground">Nenhum item no carrinho.</p>
+         {cartLines.length === 0 && (
+            <div className="text-center py-10">
+              <p className="text-muted-foreground mb-4">Nenhum item no carrinho.</p>
+              <SheetClose asChild>
+                <Button>Voltar ao cardápio</Button>
+              </SheetClose>
+            </div>
           )}
+
 
           {cartLines.map((l) => {
             const out = l.item.available === false
@@ -505,7 +520,7 @@ export default function LanchonetePedidos() {
       </section>
 
       <footer className="text-xs text-muted-foreground mt-10">
-        <p>
+         <p>
           ⚠️ Protótipo local para portfolio. Integrações reais (pagamentos, impressão de comanda, painel de pedidos)
           podem ser adicionadas depois.
         </p>
