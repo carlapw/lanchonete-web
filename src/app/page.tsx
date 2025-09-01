@@ -173,148 +173,151 @@ export default function LanchonetePedidos() {
  
   return (
     <div className="p-4 md:p-8 max-w-6xl mx-auto">
-      <header className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="size-10 rounded-2xl bg-muted flex items-center justify-center shadow">
-            <Utensils className="size-5" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold leading-tight">Mix da Praça</h1>
-            <p className="text-sm text-muted-foreground">Pedidos online — rápido e fácil</p>
-          </div>
-        </div>
+      <header className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+  <div className="flex items-center gap-3">
+    <div className="size-10 rounded-2xl bg-muted flex items-center justify-center shadow">
+      <Utensils className="size-5" />
+    </div>
+    <div>
+      <h1 className="text-2xl font-bold leading-tight">Mix da Praça</h1>
+      <p className="text-sm text-muted-foreground">Pedidos online — rápido e fácil</p>
+    </div>
+  </div>
 
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-            <Input
-              className="pl-9 w-[220px] md:w-[320px]"
-              placeholder="Buscar no cardápio…"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-          </div>
+  {/* direita: busca ocupa a largura toda no mobile e o botão encolhe */}
+  <div className="flex items-center gap-2 w-full md:w-auto">
+    <div className="relative flex-1 min-w-0">
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+      <Input
+        className="pl-9 w-full"           // <- full width no mobile
+        placeholder="Buscar no cardápio…"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+    </div>
 
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-              <Button variant="default" className="gap-2">
-                <ShoppingCart className="size-4" />
-                Carrinho
-                {cart.length > 0 && (
-                  <Badge variant="secondary" className="ml-1">
-                    {cart.reduce((a, b) => a + b.qty, 0)}
-                  </Badge>
-                )}
-              </Button>
-            </SheetTrigger>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        <Button size="sm" variant="default" className="gap-2 shrink-0">
+          <ShoppingCart className="size-4" />
+          <span className="hidden sm:inline">Carrinho</span> {/* esconde o texto em telas muito pequenas */}
+          {cart.length > 0 && (
+            <Badge variant="secondary" className="ml-1">
+              {cart.reduce((a, b) => a + b.qty, 0)}
+            </Badge>
+          )}
+        </Button>
+      </SheetTrigger>
 
-            <SheetContent side="right" className="w-full sm:max-w-sm p-0 flex flex-col">
-              <SheetHeader className="p-4 border-b sticky top-0 bg-background z-10">
-                <SheetTitle>Seu carrinho</SheetTitle>
-              </SheetHeader>
+      {/* largura total no celular para não “cortar” o painel */}
+      <SheetContent side="right" className="w-[100vw] sm:max-w-sm p-0 flex flex-col">
+        <SheetHeader className="p-4 border-b sticky top-0 bg-background z-10">
+          <SheetTitle>Seu carrinho</SheetTitle>
+        </SheetHeader>
 
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {cartLines.length === 0 && (
-                  <p className="text-muted-foreground">Nenhum item no carrinho.</p>
-                )}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {cartLines.length === 0 && (
+            <p className="text-muted-foreground">Nenhum item no carrinho.</p>
+          )}
 
-                {cartLines.map((l) => {
-                  const out = l.item.available === false;
-                  return (
-                    <Card key={String(l.id)}>
-                      <CardContent className="p-4">
-                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                          <div className="flex items-center gap-3 min-w-0">
-                            {l.item.image && (
-                              <div className="relative w-14 h-14 shrink-0 rounded-lg overflow-hidden bg-muted">
-                                <Image
-                                  src={l.item.image}
-                                  alt={l.item.name}
-                                  fill
-                                  className="object-cover"
-                                  sizes="56px"
-                                />
-                              </div>
-                            )}
-                            <div className="min-w-0">
-                              <div className="font-medium truncate">
-                                {l.item.name}
-                                {out && (
-                                  <span className="ml-2 rounded-full bg-red-100 text-red-700 text-[10px] px-2 py-0.5 align-middle">
-                                    Esgotado
-                                  </span>
-                                )}
-                              </div>
-                              <div className="text-sm text-muted-foreground">R$ {fmt(l.item.price)}</div>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-2">
-                            <Button size="icon" variant="outline" className="h-9 w-9" onClick={() => dec(l.id)}>
-                              <Minus className="size-4" />
-                            </Button>
-                            <div className="w-8 text-center select-none">{l.qty}</div>
-                            <Button
-                              size="icon"
-                              variant="outline"
-                              className="h-9 w-9"
-                              onClick={() => add(l.id)}
-                              disabled={out}
-                              title={out ? "Item esgotado" : "Adicionar"}
-                            >
-                              <Plus className="size-4" />
-                            </Button>
-                          </div>
-
-                          <div className="flex items-center justify-between md:block">
-                            <div className="font-medium">R$ {fmt(l.item.price * l.qty)}</div>
-                            {out && <div className="text-xs text-red-600">Esgotado</div>}
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className="ml-2 md:ml-0"
-                              onClick={() => remove(l.id)}
-                            >
-                              <Trash2 className="size-4" />
-                            </Button>
-                          </div>
+          {cartLines.map((l) => {
+            const out = l.item.available === false
+            return (
+              <Card key={String(l.id)}>
+                <CardContent className="p-4">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      {l.item.image && (
+                        <div className="relative w-14 h-14 shrink-0 rounded-lg overflow-hidden bg-muted">
+                          <Image
+                            src={l.item.image}
+                            alt={l.item.name}
+                            fill
+                            className="object-cover"
+                            sizes="56px"
+                          />
                         </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
+                      )}
+                      <div className="min-w-0">
+                        <div className="font-medium truncate">
+                          {l.item.name}
+                          {out && (
+                            <span className="ml-2 rounded-full bg-red-100 text-red-700 text-[10px] px-2 py-0.5 align-middle">
+                              Esgotado
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-sm text-muted-foreground">R$ {fmt(l.item.price)}</div>
+                      </div>
+                    </div>
 
-              {cartLines.length > 0 && (
-                <div className="border-t bg-background p-4 space-y-3 sticky bottom-0">
-                  <div className="space-y-1 text-sm">
-                    <div className="flex justify-between">
-                      <span>Subtotal</span>
-                      <span>R$ {fmt(subtotal)}</span>
+                    <div className="flex items-center gap-2">
+                      <Button size="icon" variant="outline" className="h-9 w-9" onClick={() => dec(l.id)}>
+                        <Minus className="size-4" />
+                      </Button>
+                      <div className="w-8 text-center select-none">{l.qty}</div>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        className="h-9 w-9"
+                        onClick={() => add(l.id)}
+                        disabled={out}
+                        title={out ? "Item esgotado" : "Adicionar"}
+                      >
+                        <Plus className="size-4" />
+                      </Button>
                     </div>
-                    <div className="flex justify-between">
-                      <span>Taxa de entrega</span>
-                      <span>R$ {fmt(taxaEntrega)}</span>
-                    </div>
-                    <div className="flex justify-between font-bold text-base">
-                      <span>Total</span>
-                      <span>R$ {fmt(total)}</span>
+
+                    <div className="flex items-center justify-between md:block">
+                      <div className="font-medium">R$ {fmt(l.item.price * l.qty)}</div>
+                      {out && <div className="text-xs text-red-600">Esgotado</div>}
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="ml-2 md:ml-0"
+                        onClick={() => remove(l.id)}
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <Button variant="outline" onClick={clear} className="w-1/3">
-                      Limpar
-                    </Button>
-                    <Button className="w-2/3" onClick={() => setOpen(false)}>
-                      Fechar
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </SheetContent>
-          </Sheet>
+                </CardContent>
+              </Card>
+            )
+          })}
         </div>
-      </header>
+
+        {cartLines.length > 0 && (
+          <div className="border-t bg-background p-4 space-y-3 sticky bottom-0">
+            <div className="space-y-1 text-sm">
+              <div className="flex justify-between">
+                <span>Subtotal</span>
+                <span>R$ {fmt(subtotal)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Taxa de entrega</span>
+                <span>R$ {fmt(taxaEntrega)}</span>
+              </div>
+              <div className="flex justify-between font-bold text-base">
+                <span>Total</span>
+                <span>R$ {fmt(total)}</span>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={clear} className="w-1/3">
+                Limpar
+              </Button>
+              <Button className="w-2/3" onClick={() => setOpen(false)}>
+                Fechar
+              </Button>
+            </div>
+          </div>
+        )}
+      </SheetContent>
+    </Sheet>
+  </div>
+</header>
+
 
       <div className="mt-6 flex flex-wrap gap-2">
         {categories.map((cat) => (
