@@ -23,7 +23,7 @@ const PAGAMENTOS: Customer["pagamento"][] = ["PIX", "Dinheiro", "Cartão"];
 const WHATSAPP_PHONE = RAW_PHONE.replace(/\D/g, ""); 
 const DELIVERY_FEE = Number(DELIVERY_FEE_RAW || 0);
 
-// Áreas/povoados atendidos (ajuste como quiser)
+
 const AREAS = [
   { id: "vereda",    nome: "Vereda",    km: 4,  taxa: 4 },
   { id: "canabrava", nome: "Canabrava", km: 5,  taxa: 5 },
@@ -36,15 +36,15 @@ function areaById(id?: string) {
 }
 
 function canDeliver(c: Customer) {
-  if (c.modo !== "Entrega") return true;       // retirada sempre pode
-  if (!c.localidade) return false;             // nada selecionado
-  return !!areaById(c.localidade);             // só se for área atendida
+  if (c.modo !== "Entrega") return true;      
+  if (!c.localidade) return false;             
+  return !!areaById(c.localidade);            
 }
 
 function deliveryFee(c: Customer) {
   if (c.modo !== "Entrega") return 0;
   const a = areaById(c.localidade);
-  // se não encontrou área, taxa 0 (bloquearemos no submit)
+
   return a ? a.taxa : 0;
 }
 
