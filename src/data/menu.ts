@@ -152,7 +152,7 @@ const MENU: MenuItem[] = [
     name: "Batata Frita + Cheddar + Bacon",
     price: 20.0,
     category: "Petiscos",
-    image: "/lanches/agua.jpg",
+    image: "/lanches/Batata.png",
     desc: "360 gramas" },
 
     { id: "calabresa-acebolada",
