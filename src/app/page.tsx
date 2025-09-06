@@ -23,6 +23,32 @@ const PAGAMENTOS: Customer["pagamento"][] = ["PIX", "Dinheiro", "Cartão"];
 const WHATSAPP_PHONE = RAW_PHONE.replace(/\D/g, ""); 
 const DELIVERY_FEE = Number(DELIVERY_FEE_RAW || 0);
 
+// Áreas/povoados atendidos (ajuste como quiser)
+const AREAS = [
+  { id: "vereda",    nome: "Vereda",    km: 4,  taxa: 4 },
+  { id: "canabrava", nome: "Canabrava", km: 5,  taxa: 5 },
+  { id: "almeida",   nome: "Almeida",   km: 9,  taxa: 8 },
+  { id: "sao-tome",  nome: "São Tomé",  km: 13, taxa: 10 },
+] as const;
+
+function areaById(id?: string) {
+  return AREAS.find((a) => a.id === id);
+}
+
+function canDeliver(c: Customer) {
+  if (c.modo !== "Entrega") return true;       // retirada sempre pode
+  if (!c.localidade) return false;             // nada selecionado
+  return !!areaById(c.localidade);             // só se for área atendida
+}
+
+function deliveryFee(c: Customer) {
+  if (c.modo !== "Entrega") return 0;
+  const a = areaById(c.localidade);
+  // se não encontrou área, taxa 0 (bloquearemos no submit)
+  return a ? a.taxa : 0;
+}
+
+
 const fmt = (n: number) =>
   n.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -37,6 +63,7 @@ type Customer = {
   pagamento: "PIX" | "Dinheiro" | "Cartão";
   troco?: string;
   obs?: string;
+  localidade?: string;
 };
 
 const useLocal = <T,>(key: string, initial: T) => {
@@ -61,6 +88,7 @@ export default function LanchonetePedidos() {
     telefone: "",
     modo: "Retirada",
     pagamento: "PIX",
+    localidade: "",
   });
 
   const categories = useMemo(
@@ -129,47 +157,62 @@ export default function LanchonetePedidos() {
     [cartLines]
   );
 
-  const taxaEntrega = customer.modo === "Entrega" ? DELIVERY_FEE : 0;
+  const taxaEntrega = deliveryFee(customer);
+
   const total = subtotal + taxaEntrega;
 
-  function handleSubmit() {
-    if (!customer.nome || !customer.telefone) {
-      alert("Preencha nome e telefone.");
-      return;
-    }
-    if (customer.modo === "Entrega" && !customer.endereco) {
-      alert("Informe o endereço para entrega.");
-      return;
-    }
-    if (cart.length === 0) {
-      alert("Seu carrinho está vazio.");
-      return;
-    }
-    if (cartLines.some((l) => l.item.available === false)) {
-      alert("Há itens esgotados no carrinho. Remova-os para finalizar.");
-      return;
-    }
-
-    const linhas = cartLines
-      .map((l) => `${l.qty}x ${l.item.name} — R$ ${fmt(l.item.price)}`)
-      .join("\n");
-    const resumo = `*Pedido da Lanchonete*\n\nCliente: ${customer.nome}\nTelefone: ${customer.telefone}\nModo: ${customer.modo}\n${
-      customer.modo === "Entrega" ? `Endereço: ${customer.endereco}\n` : ""
-    }Pagamento: ${customer.pagamento}${
-      customer.pagamento === "Dinheiro" && customer.troco ? ` (troco para ${customer.troco})` : ""
-    }\n\nItens:\n${linhas}\n\nSubtotal: R$ ${fmt(subtotal)}\nTaxa entrega: R$ ${fmt(
-      taxaEntrega
-    )}\n*Total: R$ ${fmt(total)}*\n\nObs: ${customer.obs ?? "-"}`;
-    if (!WHATSAPP_PHONE || WHATSAPP_PHONE.length < 12) {
-      alert("Número do WhatsApp da loja inválido. Verifique a variável NEXT_PUBLIC_WHATSAPP (somente dígitos: ex. 55DDDXXXXXXXX).");
-      return;
-    }
-
-    const url = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(resumo)}`;
-    const win = window.open(url, "_blank", "noopener,noreferrer");
-    if (win) win.opener = null;
-
+function handleSubmit() {
+  if (!customer.nome || !customer.telefone) {
+    alert("Preencha nome e telefone.");
+    return;
   }
+  if (customer.modo === "Entrega" && !customer.endereco) {
+    alert("Informe o endereço para entrega.");
+    return;
+  }
+  if (!canDeliver(customer)) {
+    alert("Desculpe, ainda não entregamos nessa localidade.");
+    return;
+  }
+  if (cart.length === 0) {
+    alert("Seu carrinho está vazio.");
+    return;
+  }
+  if (cartLines.some((l) => l.item.available === false)) {
+    alert("Há itens esgotados no carrinho. Remova-os para finalizar.");
+    return;
+  }
+
+  const area = areaById(customer.localidade);
+  const linhas = cartLines
+    .map((l) => `${l.qty}x ${l.item.name} — R$ ${fmt(l.item.price)}`)
+    .join("\n");
+
+  const resumo = `*Pedido da Lanchonete*\n
+Cliente: ${customer.nome}
+Telefone: ${customer.telefone}
+Modo: ${customer.modo}
+${customer.modo === "Entrega" ? `Localidade: ${area ? `${area.nome} (${area.km} km)` : "—"}\nEndereço: ${customer.endereco}\n` : ""}
+Pagamento: ${customer.pagamento}${customer.pagamento === "Dinheiro" && customer.troco ? ` (troco para ${customer.troco})` : ""}
+
+Itens:
+${linhas}
+
+Subtotal: R$ ${fmt(subtotal)}
+Taxa entrega: R$ ${fmt(taxaEntrega)}
+*Total: R$ ${fmt(total)}*
+
+Obs: ${customer.obs ?? "-"}`;
+
+  if (!WHATSAPP_PHONE) {
+    alert("Número do WhatsApp não configurado.");
+    return;
+  }
+  const url = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(resumo)}`;
+  const win = window.open(url, "_blank", "noopener,noreferrer");
+  if (win) win.opener = null;
+}
+
 
  
   return (
@@ -429,20 +472,44 @@ export default function LanchonetePedidos() {
 
             </div>
             {customer.modo === "Entrega" && (
-              <div className="space-y-2">
-                <Label htmlFor="endereco">Endereço</Label>
-                <Input
-                  id="endereco"
-                  placeholder="Rua, número, bairro"
-                  value={customer.endereco ?? ""}
-                  onChange={(e) => setCustomer({ ...customer, endereco: e.target.value })}
-                />
-                <p className="text-xs text-muted-foreground">
-                  Taxa aplicada: R$ {fmt(taxaEntrega)} (configurada no .env).
-                </p>
+                  <div className="space-y-2">
+                    <Label htmlFor="endereco">Endereço</Label>
+                    <Input
+                      id="endereco"
+                      placeholder="Rua, número, bairro"
+                      value={customer.endereco ?? ""}
+                      onChange={(e) => setCustomer({ ...customer, endereco: e.target.value })}
+                    />
 
-              </div>
-            )}
+                    <Label htmlFor="localidade">Localidade (povoado)</Label>
+                    <select
+                      id="localidade"
+                      value={customer.localidade ?? ""}
+                      onChange={(e) => setCustomer({ ...customer, localidade: e.target.value })}
+                      className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    >
+                      <option value="">Selecione…</option>
+                      {AREAS.map((a) => (
+                        <option key={a.id} value={a.id}>
+                          {a.nome} — {a.km} km (taxa R$ {fmt(a.taxa)})
+                        </option>
+                      ))}
+                      <option value="__outro">Outro (não atendido)</option>
+                    </select>
+
+                    {!canDeliver(customer) && customer.localidade && (
+                      <p className="text-xs text-red-600">
+                        No momento não entregamos nessa localidade. Escolha uma das áreas atendidas
+                        ou altere para <strong>Retirada</strong>.
+                      </p>
+                    )}
+
+                    <p className="text-xs text-muted-foreground">
+                      Taxa aplicada: R$ {fmt(taxaEntrega)} (varia por localidade).
+                    </p>
+                  </div>
+                )}
+
           </CardContent>
         </Card>
 
@@ -512,9 +579,10 @@ export default function LanchonetePedidos() {
               <span className="text-muted-foreground">Total</span>
               <span className="text-xl font-bold">R$ {fmt(total)}</span>
             </div>
-            <Button className="w-full" onClick={handleSubmit}>
+            <Button className="w-full" onClick={handleSubmit} disabled={!canDeliver(customer)}>
               Enviar pedido via WhatsApp
             </Button>
+
           </CardContent>
         </Card>
       </section>
