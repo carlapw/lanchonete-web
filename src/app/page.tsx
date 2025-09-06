@@ -25,7 +25,7 @@ const DELIVERY_FEE = Number(DELIVERY_FEE_RAW || 0);
 
 
 const AREAS = [
-  { id: "lagoa",    nome: "Lagoa",    km: 0,  taxa: "" },
+  { id: "lagoa",    nome: "Lagoa",    km: 0,  taxa: 0 },
   { id: "vereda",    nome: "Vereda",    km: 4,  taxa: 4 },
   { id: "canabrava", nome: "Canabrava", km: 5,  taxa: 5 },
   { id: "almeida",   nome: "Almeida",   km: 9,  taxa: 8 },
