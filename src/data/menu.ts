@@ -168,8 +168,64 @@ const MENU: MenuItem[] = [
     category: "Petiscos",
     image: "/lanches/calabresa-batata2.jpg",
     desc: "200 gramas de batata + calabresa" },
-//
+    
+    //outros::
+    { id: "cachorro-quente",
+    name: "Cachorro Quente",
+    price: 6.0,
+    category: "Outros Lanches",
+    image: "/lanches/cachorro-quente.jpg",
+    desc: "Pão + Molho + Salsicha + Salada + Batata-Palha " },
 
+     { id: "misto-quente",
+    name: "Misto Quente",
+    price: 6.0,
+    category: "Outros Lanches",
+    image: "/lanches/misto-quente.jpeg",
+    desc: "Pão + Queijo + Presunto + Milho" },
+
+     { id: "mine-coxinha",
+    name: "Mini Coxinha",
+    price: 2.0,
+    category: "Outros Lanches",
+    image: "/lanches/coxinha.webp",
+    desc: "Valor da Unidade" },
+//milhsheiks
+
+{ id: "milkshake",
+    name: "Milkshake Chocolate",
+    price: 12.0,
+    category: "Milkshakes",
+    image: "/lanches/milk-shake-chocolate.jpg",
+    desc: "300 ml" },
+
+    { id: "milkshake",
+    name: "Milkshake Morango",
+    price: 12.0,
+    category: "Milkshakes",
+    image: "/lanches/milk-shake-morango2.jpeg",
+    desc: "300 ml" },
+
+    { id: "milkshake",
+    name: "Milkshake Flocos",
+    price: 12.0,
+    category: "Milkshakes",
+    image: "/lanches/milk-shake-flocos.jpg",
+    desc: "300 ml" },
+
+    { id: "milkshake",
+    name: "Milkshake Nutela",
+    price: 15.0,
+    category: "Milkshakes",
+    image: "/lanches/milk-shake-nutela3.jpg",
+    desc: "300 ml" },
+
+    { id: "milkshake",
+    name: "Milkshake Ovomaltine",
+    price: 15.0,
+    category: "Milkshakes",
+    image: "/lanches/milk-shake-ovomaltine2.jpg",
+    desc: "300 ml" },
 ];
 
 export default MENU;
