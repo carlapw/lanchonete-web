@@ -175,14 +175,14 @@ const MENU: MenuItem[] = [
     price: 6.0,
     category: "Outros Lanches",
     image: "/lanches/cachorro-quente.jpg",
-    desc: "Pão + Molho + Salsicha + Salada + Batata-Palha " },
+    desc: "Pão, Molho, Salsicha, Salada, Batata-Palha " },
 
      { id: "misto-quente",
     name: "Misto Quente",
     price: 6.0,
     category: "Outros Lanches",
     image: "/lanches/misto-quente.jpeg",
-    desc: "Pão + Queijo + Presunto + Milho" },
+    desc: "Pão, Queijo, Presunto, Milho" },
 
      { id: "mine-coxinha",
     name: "Mini Coxinha",
@@ -226,6 +226,123 @@ const MENU: MenuItem[] = [
     category: "Milkshakes",
     image: "/lanches/milk-shake-ovomaltine2.jpg",
     desc: "300 ml" },
+
+    //bebidas
+    { id: "coca-cola-lata",
+    name: "Coca-cola Lata",
+    price: 6.0,
+    category: "Bebidas",
+    image: "/lanches/coca-cola.webp",
+    desc: "350 ml" },
+
+    { id: "pepsi-lata",
+    name: "Pepsi Lata",
+    price: 5.0,
+    category: "Bebidas",
+    image: "/lanches/pepsi.webp",
+    desc: "350 ml" },
+
+    { id: "pepsi-lata-zero",
+    name: "Pepsi Zero Lata",
+    price: 5.0,
+    category: "Bebidas",
+    image: "/lanches/pepsi0.webp",
+    desc: "350 ml" },
+
+    { id: "guarana-lata",
+    name: "Guarana Antartica Lata",
+    price: 5.0,
+    category: "Bebidas",
+    image: "/lanches/guarana.webp",
+    desc: "350 ml" },
+
+    { id: "fanta-lata",
+    name: "Fanta Lata",
+    price: 5.0,
+    category: "Bebidas",
+    image: "/lanches/fanta.webp",
+    desc: "350 ml" },
+
+    { id: "guarana-1l",
+    name: "Guarana Antartica ",
+    price: 8.0,
+    category: "Bebidas",
+    image: "/lanches/guarana2.webp",
+    desc: "1 litro" },
+
+    { id: "pepsi-1l",
+    name: "Pepsi",
+    price: 8.0,
+    category: "Bebidas",
+    image: "/lanches/pepsi1.webp",
+    desc: "1 litro" },
+
+    { id: "budweiser ",
+    name: "Budweiser Longneck",
+    price: 8.0,
+    category: "Bebidas",
+    image: "/lanches/budweiser.png",
+    desc: "350 ml" },
+
+    { id: "budweiser zero ",
+    name: "Budweiser zero",
+    price: 8.0,
+    category: "Bebidas",
+    image: "/lanches/budweiser0.webp",
+    desc: "350 ml" },
+
+    { id: "heineken ",
+    name: "Heineken Longneck",
+    price: 10.0,
+    category: "Bebidas",
+    image: "/lanches/heineken1.webp",
+    desc: "350 ml" },
+
+    { id: "cabare ice limao ",
+    name: "Ice Limão",
+    price: 8.0,
+    category: "Bebidas",
+    image: "/lanches/ice-limao.webp",
+    desc: "275 ml" },
+
+    { id: "cabare ice frutas vermelhas ",
+    name: "Ice Frutas Vermelhas",
+    price: 8.0,
+    category: "Bebidas",
+    image: "/lanches/ice-vermelha.webp",
+    desc: "275 ml" },
+
+    { id: "skol lata",
+    name: "Skol Lata",
+    price: 5.0,
+    category: "Bebidas",
+    image: "/lanches/skol.jpeg",
+    desc: "350 ml" },
+
+    { id: "itaipava lata ",
+    name: "Itaipava Lata",
+    price: 5.0,
+    category: "Bebidas",
+    image: "/lanches/itaipava.jpeg",
+    desc: "350 ml" },
+
+    { id: "brahma zero lata ",
+    name: "Brahma Zero Lata",
+    price: 5.0,
+    category: "Bebidas",
+    image: "/lanches/brahama0.webp",
+    desc: "350 ml" },
+
+    { id: "red-bull ",
+    name: "Red Bull",
+    price: 10.0,
+    category: "Bebidas",
+    image: "/lanches/redbull.webp",
+    desc: "250 ml" },
+
+  
+
+   
 ];
 
 export default MENU;
