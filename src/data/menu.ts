@@ -260,7 +260,7 @@ const MENU: MenuItem[] = [
     name: "Fanta Lata",
     price: 5.0,
     category: "Bebidas",
-    image: "/lanches/fanta.webp",
+    image: "/lanches/fanta-lata.webp",
     desc: "350 ml" },
 
     { id: "guarana-1l",
